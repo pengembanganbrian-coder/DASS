@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DASS-21 | Tes Depresi, Kecemasan, dan Stres</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f4f6f8;
+      color: #1f2937;
+      line-height: 1.5;
+    }
+    .container {
+      max-width: 900px;
+      margin: 32px auto;
+      padding: 0 16px 48px;
+    }
+    .card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      margin-bottom: 20px;
+    }
+    h1, h2, h3 { margin-top: 0; }
+    .subtitle { color: #4b5563; margin-bottom: 0; }
+    .note {
+      background: #eef6ff;
+      border-left: 4px solid #2563eb;
+      padding: 12px 16px;
+      border-radius: 10px;
+      color: #1e3a8a;
+      margin-top: 16px;
+    }
+    .field {
+      margin-bottom: 16px;
+    }
+    label {
+      display: block;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    input[type="text"], select {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      font-size: 14px;
+    }
+    .question-card {
+      padding: 20px;
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      margin-bottom: 16px;
+      background: #fcfcfd;
+    }
+    .question-number {
+      font-size: 13px;
+      font-weight: 700;
+      color: #2563eb;
+      margin-bottom: 6px;
+    }
+    .question-text {
+      font-size: 17px;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+    .options {
+      display: grid;
+      gap: 10px;
+    }
+    .option {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 12px;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      background: #fff;
+    }
+    .option input { margin-top: 4px; }
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 24px;
+    }
+    button {
+      border: none;
+      padding: 12px 18px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .primary { background: #2563eb; color: white; }
+    .secondary { background: #e5e7eb; color: #111827; }
+    .danger { background: #dc2626; color: white; }
+    .result-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+    .score-box {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 16px;
+    }
+    .score-box h3 { margin-bottom: 6px; }
+    .score {
+      font-size: 32px;
+      font-weight: 800;
+      margin: 6px 0;
+    }
+    .badge {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      background: #dbeafe;
+      color: #1d4ed8;
+    }
+    .footer-note {
+      margin-top: 20px;
+      color: #6b7280;
+      font-size: 13px;
+    }
+    .hidden { display: none; }
+    .warning {
+      color: #b91c1c;
+      font-weight: 700;
+      margin-top: 10px;
+    }
+    @media (max-width: 640px) {
+      .card { padding: 18px; }
+      .question-text { font-size: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h1>Depression Anxiety Stress Scale (DASS-21)</h1>
+      <p class="subtitle">Alat ukur ini digunakan untuk mengukur kondisi emosi berupa depresi, kecemasan, dan stres berdasarkan pengalaman selama seminggu terakhir.</p>
+      <div class="note">
+        Petunjuk: Bacalah setiap pernyataan dan pilih jawaban yang paling sesuai dengan kondisi Anda selama <b>seminggu terakhir</b>. Tidak ada jawaban benar atau salah.
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Identitas Responden</h2>
+      <div class="field">
+        <label for="nama">Nama</label>
+        <input type="text" id="nama" placeholder="Masukkan nama" />
+      </div>
+      <div class="field">
+        <label for="nip">NIP</label>
+        <input type="text" id="nip" placeholder="Masukkan NIP" />
+      </div>
+      <div class="field">
+        <label for="bagian">Bagian</label>
+        <select id="bagian">
+          <option value="">Pilih bagian</option>
+          <option>Bagian Keuangan</option>
+          <option>Bagian Pengembangan Kepegawaian</option>
+          <option>Bagian OTL</option>
+          <option>Bagian Umum</option>
+          <option>Bagian Administrasi Kepegawaian</option>
+          <option>Bagian PBMN</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="questionsContainer" class="card">
+      <h2>Pernyataan DASS-21</h2>
+      <div id="questionsList"></div>
+      <div id="warning" class="warning hidden">Masih ada pertanyaan yang belum dijawab.</div>
+      <div class="actions">
+        <button class="primary" onclick="hitungHasil()">Lihat Hasil</button>
+        <button class="secondary" onclick="simpanJSON()">Simpan Hasil (.json)</button>
+        <button class="danger" onclick="resetForm()">Reset</button>
+      </div>
+    </div>
+
+    <div id="resultCard" class="card hidden">
+      <h2>Hasil Penilaian</h2>
+      <p id="respondenInfo"></p>
+      <div class="result-grid" id="resultGrid"></div>
+      <div class="footer-note">
+        Catatan: Hasil ini merupakan skrining awal, bukan diagnosis klinis. Bila skor tinggi atau kondisi dirasa mengganggu fungsi harian, pertimbangkan konsultasi dengan psikolog/psikiater.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const options = [
+      { value: 0, label: 'Tidak sesuai dengan saya sama sekali, atau tidak pernah' },
+      { value: 1, label: 'Sesuai dengan saya sampai tingkat tertentu, atau kadang-kadang' },
+      { value: 2, label: 'Sesuai dengan saya sampai batas yang dapat dipertimbangkan, atau cukup sering' },
+      { value: 3, label: 'Sangat sesuai dengan saya, atau sering sekali' }
+    ];
+
+    const questions = [
+      { id: 1, text: 'Saya merasa sulit untuk bersantai', scale: 'stress' },
+      { id: 2, text: 'Saya merasa mulut saya sering kering', scale: 'anxiety' },
+      { id: 3, text: 'Saya sama sekali tidak dapat merasakan perasaan positif', scale: 'depression' },
+      { id: 4, text: 'Saya mengalami kesulitan bernapas (misalnya: sering kali terengah-engah atau tidak dapat bernapas padahal tidak melakukan aktivitas fisik sebelumnya)', scale: 'anxiety' },
+      { id: 5, text: 'Saya sepertinya tidak kuat lagi untuk melakukan suatu kegiatan', scale: 'depression' },
+      { id: 6, text: 'Saya cenderung bereaksi berlebihan terhadap suatu situasi', scale: 'stress' },
+      { id: 7, text: 'Saya merasa gemetar (misalnya: pada tangan)', scale: 'anxiety' },
+      { id: 8, text: 'Saya merasa telah menghabiskan banyak energi disaat merasa cemas', scale: 'stress' },
+      { id: 9, text: 'Saya merasa khawatir dengan situasi dimana saya mungkin menjadi panik dan mempermalukan diri sendiri', scale: 'anxiety' },
+      { id: 10, text: 'Saya merasa tidak ada hal yang dapat diharapkan di masa depan', scale: 'depression' },
+      { id: 11, text: 'Saya mendapati diri saya gelisah', scale: 'stress' },
+      { id: 12, text: 'Saya merasa sulit untuk bersantai', scale: 'stress' },
+      { id: 13, text: 'Saya merasa sedih dan tertekan', scale: 'depression' },
+      { id: 14, text: 'Saya sulit untuk sabar dalam menghadapi gangguan terhadap hal yang sedang saya lakukan', scale: 'stress' },
+      { id: 15, text: 'Saya merasa saya hampir panik', scale: 'anxiety' },
+      { id: 16, text: 'Saya tidak merasa antusias dalam hal apapun', scale: 'depression' },
+      { id: 17, text: 'Saya merasa bahwa saya tidak berharga sebagai seorang manusia', scale: 'depression' },
+      { id: 18, text: 'Saya merasa bahwa saya mudah tersinggung', scale: 'stress' },
+      { id: 19, text: 'Saya menyadari perubahan detak jantung, walaupun tidak sehabis melakukan aktivitas fisik (misalnya: merasa detak jantung meningkat atau melemah)', scale: 'anxiety' },
+      { id: 20, text: 'Saya merasa takut tanpa alasan yang jelas', scale: 'anxiety' },
+      { id: 21, text: 'Saya merasa bahwa hidup tidak bermanfaat', scale: 'depression' }
+    ];
+
+    const interpretations = {
+      depression: [
+        { min: 0, max: 9, label: 'Normal' },
+        { min: 10, max: 13, label: 'Ringan' },
+        { min: 14, max: 20, label: 'Sedang' },
+        { min: 21, max: 27, label: 'Berat' },
+        { min: 28, max: 100, label: 'Sangat Berat' }
+      ],
+      anxiety: [
+        { min: 0, max: 7, label: 'Normal' },
+        { min: 8, max: 9, label: 'Ringan' },
+        { min: 10, max: 14, label: 'Sedang' },
+        { min: 15, max: 19, label: 'Berat' },
+        { min: 20, max: 100, label: 'Sangat Berat' }
+      ],
+      stress: [
+        { min: 0, max: 14, label: 'Normal' },
+        { min: 15, max: 18, label: 'Ringan' },
+        { min: 19, max: 25, label: 'Sedang' },
+        { min: 26, max: 33, label: 'Berat' },
+        { min: 34, max: 100, label: 'Sangat Berat' }
+      ]
+    };
+
+    function renderQuestions() {
+      const container = document.getElementById('questionsList');
+      container.innerHTML = '';
+
+      questions.forEach((question) => {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'question-card';
+
+        wrapper.innerHTML = `
+          <div class="question-number">Pernyataan ${question.id}</div>
+          <div class="question-text">${question.id}. ${question.text}</div>
+          <div class="options">
+            ${options.map(option => `
+              <label class="option">
+                <input type="radio" name="q${question.id}" value="${option.value}" />
+                <span>${option.label}</span>
+              </label>
+            `).join('')}
+          </div>
+        `;
+
+        container.appendChild(wrapper);
+      });
+    }
+
+    function getInterpretation(scale, score) {
+      const range = interpretations[scale].find(item => score >= item.min && score <= item.max);
+      return range ? range.label : '-';
+    }
+
+    function ambilJawaban() {
+      const answers = {};
+      let incomplete = false;
+
+      questions.forEach((question) => {
+        const checked = document.querySelector(`input[name="q${question.id}"]:checked`);
+        if (!checked) incomplete = true;
+        answers[question.id] = checked ? Number(checked.value) : null;
+      });
+
+      return { answers, incomplete };
+    }
+
+    function hitungHasil() {
+      const { answers, incomplete } = ambilJawaban();
+      const warning = document.getElementById('warning');
+
+      if (incomplete) {
+        warning.classList.remove('hidden');
+        document.getElementById('resultCard').classList.add('hidden');
+        return;
+      }
+
+      warning.classList.add('hidden');
+
+      let depression = 0;
+      let anxiety = 0;
+      let stress = 0;
+
+      questions.forEach((question) => {
+        const value = answers[question.id] ?? 0;
+        if (question.scale === 'depression') depression += value;
+        if (question.scale === 'anxiety') anxiety += value;
+        if (question.scale === 'stress') stress += value;
+      });
+
+      depression *= 2;
+      anxiety *= 2;
+      stress *= 2;
+
+      const nama = document.getElementById('nama').value || '-';
+      const nip = document.getElementById('nip').value || '-';
+      const bagian = document.getElementById('bagian').value || '-';
+
+      document.getElementById('respondenInfo').innerHTML = `
+        <b>Nama:</b> ${nama}<br>
+        <b>NIP:</b> ${nip}<br>
+        <b>Bagian:</b> ${bagian}
+      `;
+
+      const results = [
+        { title: 'Depresi', score: depression, category: getInterpretation('depression', depression) },
+        { title: 'Kecemasan', score: anxiety, category: getInterpretation('anxiety', anxiety) },
+        { title: 'Stres', score: stress, category: getInterpretation('stress', stress) }
+      ];
+
+      document.getElementById('resultGrid').innerHTML = results.map(item => `
+        <div class="score-box">
+          <h3>${item.title}</h3>
+          <div class="score">${item.score}</div>
+          <span class="badge">${item.category}</span>
+        </div>
+      `).join('');
+
+      document.getElementById('resultCard').classList.remove('hidden');
+      document.getElementById('resultCard').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function simpanJSON() {
+      const { answers, incomplete } = ambilJawaban();
+      if (incomplete) {
+        document.getElementById('warning').classList.remove('hidden');
+        return;
+      }
+
+      let depression = 0;
+      let anxiety = 0;
+      let stress = 0;
+
+      questions.forEach((question) => {
+        const value = answers[question.id] ?? 0;
+        if (question.scale === 'depression') depression += value;
+        if (question.scale === 'anxiety') anxiety += value;
+        if (question.scale === 'stress') stress += value;
+      });
+
+      depression *= 2;
+      anxiety *= 2;
+      stress *= 2;
+
+      const data = {
+        nama: document.getElementById('nama').value || '',
+        nip: document.getElementById('nip').value || '',
+        bagian: document.getElementById('bagian').value || '',
+        jawaban: answers,
+        hasil: {
+          depresi: { skor: depression, kategori: getInterpretation('depression', depression) },
+          kecemasan: { skor: anxiety, kategori: getInterpretation('anxiety', anxiety) },
+          stres: { skor: stress, kategori: getInterpretation('stress', stress) }
+        },
+        timestamp: new Date().toISOString()
+      };
+
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `hasil-dass21-${(data.nama || 'responden').replace(/\s+/g, '-').toLowerCase()}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function resetForm() {
+      document.getElementById('nama').value = '';
+      document.getElementById('nip').value = '';
+      document.getElementById('bagian').value = '';
+      document.querySelectorAll('input[type="radio"]').forEach(input => input.checked = false);
+      document.getElementById('resultCard').classList.add('hidden');
+      document.getElementById('warning').classList.add('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    renderQuestions();
+  </script>
+</body>
+</html>
